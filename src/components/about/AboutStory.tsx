@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { features } from "@/lib/content";
-import { closing, earlyDays, founder, growth, message, opening, people, struggle, type OwnerAnswer } from "@/lib/about";
+import { closing, earlyDays, founder, opening, purpose } from "@/lib/about";
 import { heroSerif } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { ArrowLink } from "@/components/ui/ArrowLink";
@@ -8,9 +7,9 @@ import { ImageSlot } from "@/components/ui/ImageSlot";
 import { Reveal } from "@/components/ui/Reveal";
 
 /**
- * The About page as a story told by a real businessman: warm, plain words,
- * big photographs, short paragraphs. Unverified details are owner questions,
- * shown as dashed placeholders in review mode and hidden at launch.
+ * The About page: where MSP began, the man who started it, what MSP stands for.
+ * Warm, plain words and big photographs. Only verified facts are written;
+ * the founder's own story appears once he has told it (`earlyDays.answers`).
  */
 
 const serif = heroSerif.className;
@@ -24,32 +23,6 @@ function Kicker({ children, className }: { children: React.ReactNode; className?
       <span aria-hidden className="h-px w-8 bg-current" />
       {children}
     </p>
-  );
-}
-
-/** An owner's answer, published in their words — or, until then, the question as a review-mode placeholder. */
-function Answers({ items, dark = false }: { items: OwnerAnswer[]; dark?: boolean }) {
-  return (
-    <>
-      {items.map((a) =>
-        a.answer ? (
-          <Reveal key={a.question}>
-            <p className={cn(body, "mt-5", dark ? "text-paper/80" : "text-ink/75")}>{a.answer}</p>
-          </Reveal>
-        ) : features.showUnconfirmed ? (
-          <p
-            key={a.question}
-            className={cn(
-              "mt-4 rounded-sm border border-dashed px-4 py-3 text-sm leading-relaxed",
-              dark ? "border-paper/30 text-paper/55" : "border-ink/25 text-ink/50",
-            )}
-          >
-            <span className="eyebrow mr-2 !text-[9px] text-rust">Owner to answer</span>
-            {a.question}
-          </p>
-        ) : null,
-      )}
-    </>
   );
 }
 
@@ -80,202 +53,98 @@ export function StoryOpening() {
   );
 }
 
-/* 2 ─ The early days -------------------------------------------------------- */
+/* 2 ─ The founder — a profile card beside his photograph -------------------- */
 
-export function StoryEarlyDays() {
+export function StoryFounder() {
+  const told = earlyDays.answers.filter((a) => a.answer);
   return (
-    <section aria-labelledby="early-title" className="bg-paper text-ink">
-      <div className="shell grid-12 gap-y-12 py-24 sm:py-32 lg:py-40">
-        <div className="order-2 col-span-12 lg:order-none lg:col-span-5">
-          <div className="lg:sticky lg:top-28">
-            <Reveal y={30}>
-              <ImageSlot asset={earlyDays.image} caption={false} seed={21} className="aspect-[4/5]" sizes="(min-width:1024px) 40vw, 100vw" />
-            </Reveal>
-            <Reveal delay={0.1} className="mt-5 flex items-center gap-4">
-              <ImageSlot asset={founder.portrait} caption={false} seed={22} className="aspect-square w-16 shrink-0 rounded-full" sizes="64px" />
-              <div>
-                <p className="eyebrow !text-[10px] text-ink/45">Founder</p>
-                <p className="mt-1 font-display font-bold">{founder.name}</p>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-        <div className="col-span-12 lg:col-span-6 lg:col-start-7 lg:pt-10">
-          <Kicker>The early days</Kicker>
-          <Reveal>
-            <h2 id="early-title" className={h2}>{earlyDays.heading}</h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className={cn(body, "mt-8 text-ink/75")}>{earlyDays.intro}</p>
-          </Reveal>
-          <Answers items={earlyDays.answers} />
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* 3 ─ What it takes to grow ------------------------------------------------- */
-
-export function StoryStruggle() {
-  return (
-    <section aria-labelledby="struggle-title" className="bg-[#2E1C11] text-paper">
-      <div className="shell grid-12 items-center gap-y-12 py-24 sm:py-32 lg:py-40">
-        <div className="col-span-12 lg:col-span-6">
-          <Kicker className="text-[#E9C27A]">The hard part</Kicker>
-          <Reveal>
-            <h2 id="struggle-title" className={h2}>{struggle.heading}</h2>
-          </Reveal>
-          <div className="mt-8 space-y-5">
-            {struggle.lines.map((l, i) => (
-              <Reveal key={l} delay={0.08 * i}>
-                <p className={cn(body, "text-paper/80")}>{l}</p>
-              </Reveal>
-            ))}
-          </div>
-          <Reveal delay={0.2}>
-            <p className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold uppercase tracking-[0.14em] text-[#E9C27A]">
-              {struggle.values.map((v, i) => (
-                <span key={v} className="flex items-center gap-4">
-                  {i > 0 && <span aria-hidden className="size-1 rounded-full bg-current opacity-60" />}
-                  {v}
-                </span>
-              ))}
-            </p>
-          </Reveal>
-          <Answers items={struggle.answers} dark />
-        </div>
-        <Reveal y={40} className="col-span-12 lg:col-span-5 lg:col-start-8">
-          <ImageSlot asset={struggle.image} caption={false} parallax={5} className="aspect-[4/5]" sizes="(min-width:1024px) 40vw, 100vw" />
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* 4 ─ How MSP grew ---------------------------------------------------------- */
-
-export function StoryGrowth() {
-  return (
-    <section aria-labelledby="growth-title" className={cn(CREAM, "text-ink")}>
+    <section aria-labelledby="founder-title" className="bg-paper text-ink">
       <div className="shell py-24 sm:py-32 lg:py-40">
-        <div className="grid-12 gap-y-8">
-          <div className="col-span-12 lg:col-span-5">
-            <Kicker>Growing step by step</Kicker>
-            <Reveal>
-              <h2 id="growth-title" className={h2}>{growth.heading}</h2>
-            </Reveal>
-          </div>
-          <Reveal delay={0.1} className="col-span-12 lg:col-span-6 lg:col-start-7 lg:pt-14">
-            <p className={cn(body, "text-ink/75")}>{growth.intro}</p>
+        <Reveal className="mb-12 lg:mb-16">
+          <Kicker>Where it all started</Kicker>
+        </Reveal>
+        <div className="grid-12 items-stretch gap-y-0">
+          <Reveal y={30} className="col-span-12 lg:col-span-5">
+            <ImageSlot asset={founder.portrait} caption={false} seed={21} className="aspect-[4/5] h-full" sizes="(min-width:1024px) 40vw, 100vw" />
+          </Reveal>
+          <Reveal y={30} delay={0.1} className="col-span-12 lg:col-span-7">
+            <article className="flex h-full flex-col justify-center border border-[#B58A3A]/30 bg-[#FBF7F0] px-6 py-10 sm:px-12 sm:py-14 lg:border-l-0 lg:px-16">
+              <p className="eyebrow text-rust">Founder</p>
+              <h2 id="founder-title" className={cn(serif, "mt-4 text-[clamp(2.2rem,4vw,3.5rem)] font-medium leading-[1.05] tracking-[-0.02em]")}>
+                {founder.name}
+              </h2>
+              <span aria-hidden className="mt-6 block h-px w-16 bg-[#B58A3A]" />
+              <p className={cn(body, "mt-6 text-ink/75")}>{earlyDays.intro}</p>
+              {told.map((a) => (
+                <p key={a.question} className={cn(body, "mt-4 text-ink/75")}>{a.answer}</p>
+              ))}
+              <p className={cn(serif, "mt-6 text-[clamp(1.2rem,1.7vw,1.5rem)] italic leading-snug text-ink/85")}>{earlyDays.statement}</p>
+              <dl className="mt-10 grid gap-5 border-t border-ink/15 pt-6 sm:grid-cols-3 sm:gap-6">
+                {earlyDays.facts.map((f) => (
+                  <div key={f.label}>
+                    <dt className="eyebrow !text-[10px] text-ink/45">{f.label}</dt>
+                    <dd className="mt-2 font-display font-bold leading-snug">{f.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
           </Reveal>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <ul className="mt-14 border-t border-ink/15 lg:mt-20">
-          {growth.areas.map((a, i) => (
-            <Reveal as="li" key={a.slug} y={14} delay={i * 0.04} className="border-b border-ink/15">
-              <Link href={`/businesses/${a.slug}`} className="group grid gap-1 py-5 sm:grid-cols-12 sm:items-baseline sm:gap-6 lg:py-6">
-                <span className={cn(serif, "text-[clamp(1.35rem,2.2vw,1.9rem)] font-medium leading-tight transition-colors group-hover:text-rust sm:col-span-5")}>{a.name}</span>
-                <span className={cn(body, "text-ink/65 sm:col-span-7")}>{a.line}</span>
-              </Link>
+/* 3 ─ Vision & mission ------------------------------------------------------ */
+
+export function StoryPurpose() {
+  return (
+    <section aria-labelledby="purpose-title" className="relative isolate overflow-hidden bg-[#2E1C11] text-paper">
+      <ImageSlot asset={purpose.image} caption={false} parallax={6} className="!absolute inset-0 -z-10 h-full opacity-35" sizes="100vw" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-[radial-gradient(70%_60%_at_50%_0%,rgba(214,150,88,0.22),transparent_70%),linear-gradient(180deg,rgba(46,28,17,0.75),rgba(46,28,17,0.95))]" />
+      <div className="shell py-24 sm:py-32 lg:py-40">
+        <div className="text-center">
+          <Kicker className="justify-center !text-[#E9C27A]">What we stand for</Kicker>
+          <Reveal>
+            <h2 id="purpose-title" className={cn(h2, "mx-auto max-w-3xl")}>
+              Built on trust. <em className="text-[#E9C27A]">Guided by purpose.</em>
+            </h2>
+          </Reveal>
+          {features.showUnconfirmed && !purpose.approved && (
+            <p className="mx-auto mt-6 w-fit rounded-full border border-dashed border-[#E9C27A]/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#E9C27A]">
+              Draft wording — owner to approve
+            </p>
+          )}
+        </div>
+
+        <div className="mt-16 grid gap-px overflow-hidden border border-[#B58A3A]/35 bg-[#B58A3A]/35 lg:mt-20 lg:grid-cols-2">
+          {[purpose.vision, purpose.mission].map((p, i) => (
+            <Reveal key={p.title} delay={i * 0.12} className="bg-[#2E1C11]/85 p-8 backdrop-blur-sm sm:p-12 lg:p-16">
+              <p className={cn(serif, "text-6xl leading-none text-[#E9C27A]/40")} aria-hidden>
+                {String(i + 1).padStart(2, "0")}
+              </p>
+              <h3 className={cn(serif, "mt-6 text-[clamp(1.8rem,3vw,2.6rem)] font-medium")}>{p.title}</h3>
+              <span aria-hidden className="mt-5 block h-px w-14 bg-[#B58A3A]" />
+              <p className={cn(body, "mt-6 text-paper/80")}>{p.text}</p>
+            </Reveal>
+          ))}
+        </div>
+
+        <ul className="mt-14 grid grid-cols-2 gap-x-6 gap-y-10 lg:mt-20 lg:grid-cols-4">
+          {purpose.values.map((v, i) => (
+            <Reveal as="li" key={v.title} delay={i * 0.08} className="text-center">
+              <span aria-hidden className="mx-auto block size-2 rotate-45 bg-[#E9C27A]" />
+              <p className={cn(serif, "mt-5 text-xl font-medium sm:text-2xl")}>{v.title}</p>
+              <p className="mt-2 text-sm text-paper/65 sm:text-base">{v.line}</p>
             </Reveal>
           ))}
         </ul>
-
-        <div className="mt-14 grid grid-cols-2 gap-3 sm:gap-4 lg:mt-20 lg:grid-cols-3">
-          {growth.images.map((im, i) => (
-            <Reveal key={im.src} delay={i * 0.08} className={cn(i === 0 && "col-span-2 lg:col-span-1")}>
-              <ImageSlot asset={im} caption={false} seed={40 + i} className="aspect-[4/3]" sizes="(min-width:1024px) 33vw, 50vw" />
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal className="mt-12 max-w-3xl">
-          <p className={cn(serif, "text-[clamp(1.35rem,2.2vw,1.85rem)] italic leading-snug text-ink/80")}>{growth.closing}</p>
-        </Reveal>
-        <div className="max-w-3xl">
-          <Answers items={growth.answers} />
-        </div>
       </div>
     </section>
   );
 }
 
-/* 5 ─ The people behind the business ---------------------------------------- */
-
-export function StoryPeople() {
-  const [lead, ...rest] = people.images;
-  return (
-    <section aria-labelledby="people-title" className="bg-paper text-ink">
-      <div className="shell grid-12 gap-y-12 py-24 sm:py-32 lg:py-40">
-        <div className="col-span-12 lg:col-span-5">
-          <Kicker>The people</Kicker>
-          <Reveal>
-            <h2 id="people-title" className={h2}>{people.heading}</h2>
-          </Reveal>
-          <div className="mt-8 space-y-5">
-            {people.lines.map((l, i) => (
-              <Reveal key={l} delay={0.08 * i}>
-                <p className={cn(body, "text-ink/75")}>{l}</p>
-              </Reveal>
-            ))}
-          </div>
-          <dl className="mt-10 space-y-5">
-            {people.groups.map((g, i) => (
-              <Reveal key={g.title} delay={0.06 * i} className="border-t border-ink/15 pt-4">
-                <dt className="font-display font-bold">{g.title}</dt>
-                <dd className="mt-1 text-ink/65">{g.line}</dd>
-              </Reveal>
-            ))}
-          </dl>
-        </div>
-        <div className="col-span-12 grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-6 lg:col-start-7">
-          <Reveal y={40} className="col-span-2">
-            <ImageSlot asset={lead} caption={false} seed={50} parallax={4} className="aspect-[16/10]" sizes="(min-width:1024px) 50vw, 100vw" />
-          </Reveal>
-          {rest.map((im, i) => (
-            <Reveal key={im.src} y={30} delay={0.1 + i * 0.08}>
-              <ImageSlot asset={im} caption={false} seed={51 + i} className="aspect-square" sizes="(min-width:1024px) 25vw, 50vw" />
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* 6 ─ A message from us ----------------------------------------------------- */
-
-export function StoryMessage() {
-  return (
-    <section aria-labelledby="message-title" className={cn(CREAM, "text-ink")}>
-      <div className="shell py-24 sm:py-32 lg:py-40">
-        <Reveal y={30}>
-          <article className="relative mx-auto max-w-3xl border border-[#B58A3A]/30 bg-[#FBF7F0] px-6 py-12 shadow-[0_40px_80px_-50px_rgba(46,28,17,0.45)] sm:px-14 sm:py-16">
-            {features.showUnconfirmed && !message.approved && (
-              <span className="absolute right-4 top-4 rounded-full border border-dashed border-rust/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-rust">
-                Sample draft — needs owner approval
-              </span>
-            )}
-            <p className="eyebrow text-center text-rust">In our own words</p>
-            <h2 id="message-title" className={cn(h2, "mt-4 text-center")}>{message.heading}</h2>
-            <span aria-hidden className="mx-auto mt-6 block h-px w-16 bg-[#B58A3A]" />
-            <div className="mt-10 space-y-6">
-              {message.paragraphs.map((p) => (
-                <p key={p} className={cn(serif, "text-[clamp(1.1rem,1.5vw,1.3rem)] leading-[1.75] text-ink/80")}>{p}</p>
-              ))}
-            </div>
-            <p className={cn(serif, "mt-10 text-right text-lg italic text-ink/70")}>
-              — {message.approved ? founder.name : "The MSP family"}
-            </p>
-          </article>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* 7 ─ Our journey continues ------------------------------------------------- */
+/* 4 ─ Our journey continues ------------------------------------------------- */
 
 export function StoryClosing() {
   return (

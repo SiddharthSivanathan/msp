@@ -1,13 +1,5 @@
 import type { Metadata } from "next";
-import {
-  StoryClosing,
-  StoryEarlyDays,
-  StoryGrowth,
-  StoryMessage,
-  StoryOpening,
-  StoryPeople,
-  StoryStruggle,
-} from "@/components/about/AboutStory";
+import { StoryClosing, StoryFounder, StoryOpening, StoryPurpose } from "@/components/about/AboutStory";
 
 export const metadata: Metadata = {
   title: "Our Story",
@@ -16,16 +8,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/about" },
 };
 
-/** The MSP story, told simply: beginning → early days → growing → the group → people → a message → onward. */
+/** The MSP story: the beginning → the founder → what we stand for → onward. */
 export default function AboutPage() {
   return (
     <>
       <StoryOpening />
-      <StoryEarlyDays />
-      <StoryStruggle />
-      <StoryGrowth />
-      <StoryPeople />
-      <StoryMessage />
+      <StoryFounder />
+      <StoryPurpose />
       <StoryClosing />
     </>
   );

@@ -241,13 +241,11 @@ The system is set up to attach cleanly later:
 
 ## About page — the MSP story (`src/lib/about.ts`)
 
-Seven parts: opening → early days → what it takes to grow → how MSP grew → people → a message → our journey continues.
-Only verified facts are written as fact. Owner answers live in `answers: [{ question, answer }]`; while
-`answer` is `null` the question shows as a dashed "Owner to answer" box in review mode and is hidden at launch.
-Put the owner's own words into `answer` to publish them.
-
-The founder message (`message.paragraphs`) is a **sample draft**, signed "The MSP family" until the owner
-approves it — then set `message.approved = true` and it is signed by Mr. M Sevugaperumal.
+Four parts: opening ("Every business has a beginning") → founder profile card ("Where it all started") →
+"What we stand for" (vision, mission, values — DRAFT wording, set `purpose.approved = true` once the owner
+agrees) → "Our journey continues".
+Only verified facts are written. The founder's own story goes into `earlyDays.answers[].answer`; answered
+items appear on his profile card in his words, unanswered ones are never shown.
 
 **Questions for the owner**
 1. What inspired you to start the business? What were you doing before?
