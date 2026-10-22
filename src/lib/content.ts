@@ -22,6 +22,27 @@ export const site = {
   tagline: "One Group. Many Possibilities.",
   headline: ["Wholesale.", "Distribution.", "Business."],
   heroLine: "One group. Different businesses.",
+  /** Homepage hero — a full-width brand banner (the first slide is shown). */
+  hero: {
+    slides: [
+      {
+        key: "fresh",
+        label: "MSP Fresh Products",
+        title: ["Our own products.", "Made for every kitchen."],
+        text: "Cooking powders, masalas and everyday essentials under the MSP Fresh name.",
+        cta: { label: "View Products", href: "/businesses/msp-fresh-products" },
+        link: null as { label: string; href: string } | null,
+        image: "hero-fresh-full",
+        alt: "MSP Fresh White Pepper Powder, Kashmiri Chilli Powder and Pickle Masala with whole spices",
+        position: "50% 100%",
+        /** The whole product scene fills the banner; the message sits centred above the packs. */
+        full: true,
+        /** Named in the banner's catalogue caption — as printed on the packs. */
+        products: ["White Pepper Powder", "Kashmiri Chilli Powder", "Pickle Masala"],
+        tab: "Our own products",
+      },
+    ],
+  },
   supporting: "Building Business. Connecting Islands.",
   divisions: ["Wholesale", "Distribution", "Products", "Transport", "Cargo", "Finance"],
   title: "MSP — Wholesale. Distribution. Business Supply.",

@@ -1,102 +1,119 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useScroll } from "motion/react";
-import { useRef } from "react";
-import { own, site } from "@/lib/content";
+import { motion, useReducedMotion } from "motion/react";
+import { site } from "@/lib/content";
 import { heroSerif } from "@/lib/fonts";
-import { useRange } from "@/lib/motion";
 import { EASE, cn } from "@/lib/utils";
 import { ArrowLink } from "@/components/ui/ArrowLink";
 
 /**
- * A calm, premium product still-life in the manner of leading Indian FMCG
- * homepages: MSP's own packs on a warm wooden table, the headline set in a
- * display serif above them. The stage image melts into a deep-brown backdrop
- * that matches its wall, so the photograph has no hard edges at any width.
+ * The MSP Fresh banner, in the manner of Indian FMCG brand homepages (Aachi,
+ * Sakthi Masala). The whole product scene fills the background — every pack
+ * fully in view — and the message sits centred above the packs, on the warm
+ * wall of the photograph. Shading is kept to the reading area so the products
+ * stay bright. On desktop the banner takes the photograph's own proportions, so the
+ * scene is never cropped. On phones the message comes first and the full scene follows.
  */
-const still = own("hero-still", "MSP Fresh White Pepper Powder, Kashmiri Chilli Powder and Pickle Masala on a wooden table with whole spices", "products");
-const BG = "#2E1C11";
-/** Soft edges on every side so the photograph dissolves into the backdrop. */
-const STAGE_MASK =
-  "linear-gradient(to bottom, transparent 0%, #000 32%, #000 88%, transparent 100%), linear-gradient(to right, transparent 0%, #000 15%, #000 85%, transparent 100%)";
+const s = site.hero.slides[0];
+const CORNERS = [
+  "left-0 top-0 border-l border-t",
+  "right-0 top-0 border-r border-t",
+  "bottom-0 left-0 border-b border-l",
+  "bottom-0 right-0 border-b border-r",
+];
+const RISE = {
+  hidden: { opacity: 0, y: 16 },
+  shown: { opacity: 1, y: 0, transition: { duration: 0.8, ease: EASE } },
+};
 
 export function Hero() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imgY = useRange(scrollYProgress, [0, 1], ["0%", "12%"]);
-  const textY = useRange(scrollYProgress, [0, 1], ["0%", "35%"]);
-  const fade = useRange(scrollYProgress, [0, 0.6], [1, 0]);
-  const [first, ...rest] = site.headline;
+  const still = useReducedMotion();
 
   return (
-    <section
-      ref={ref}
-      aria-labelledby="hero-title"
-      className="relative isolate flex min-h-[680px] flex-col overflow-hidden text-paper [height:100svh]"
-      style={{ background: BG }}
-    >
-      {/* Warm window light behind the headline */}
-      <div aria-hidden className="absolute inset-0 -z-20 bg-[radial-gradient(60%_45%_at_50%_18%,rgba(214,150,88,0.28),transparent_70%)]" />
-
-      {/* Product stage */}
-      <motion.div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 flex h-[46%] justify-center sm:h-[50%] lg:h-[54%]" style={{ y: imgY }}>
-        <motion.div
-          className="relative aspect-[2339/1011] h-full shrink-0 overflow-hidden"
-          style={{ maskImage: STAGE_MASK, WebkitMaskImage: STAGE_MASK, maskComposite: "intersect", WebkitMaskComposite: "source-in" }}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.8, ease: EASE, delay: 0.2 }}
-        >
-          <div className="absolute inset-0 motion-safe:[animation:ken-burns_22s_var(--ease-brand)_both]">
-            <Image src={still.src!} alt="" fill priority sizes="(min-width:1024px) 90vw, 260vw" className="object-cover" />
-          </div>
-        </motion.div>
+    <section aria-labelledby="hero-title" className="relative isolate overflow-hidden bg-[#2A1A10] text-paper lg:aspect-[2339/1481]">
+      {/* The product scene — full background on desktop */}
+      <motion.div
+        className="absolute inset-0 -z-10 hidden lg:block"
+        initial={still ? false : { scale: 1.06, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 1.8, ease: EASE }}
+      >
+        <Image src={`/images/msp/${s.image}.jpg`} alt={s.alt} fill priority sizes="100vw" className="object-cover" style={{ objectPosition: s.position }} />
       </motion.div>
+      {/* Shade only where the words sit, and under the menu */}
+      <div aria-hidden className="absolute inset-0 -z-10 hidden bg-[radial-gradient(55%_42%_at_50%_22%,rgba(22,13,7,0.62),transparent_75%)] lg:block" />
+      <div aria-hidden className="absolute inset-x-0 top-0 -z-10 h-40 bg-gradient-to-b from-[#160D07]/75 to-transparent" />
+      <div aria-hidden className="absolute inset-x-0 bottom-0 -z-10 hidden h-28 bg-gradient-to-t from-[#120A05]/80 to-transparent lg:block" />
 
-      <motion.div className="shell relative flex flex-col items-center pt-28 text-center sm:pt-32 lg:pt-36" style={{ y: textY, opacity: fade }}>
-        <motion.p
-          className="eyebrow mb-5 flex items-center gap-3 text-[#E9C27A]"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: EASE, delay: 0.5 }}
-        >
-          <span className="h-px w-8 bg-current" aria-hidden />
-          MSP Group
-          <span className="h-px w-8 bg-current" aria-hidden />
+      {/* Fine gold corner marks — a quiet frame around the scene */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-6 bottom-6 top-24 hidden lg:block xl:inset-x-8 xl:bottom-8 xl:top-28">
+        {CORNERS.map((c) => (
+          <span key={c} className={cn("absolute size-7 border-[#E9C27A]/45", c)} />
+        ))}
+      </div>
+
+      {/* The message */}
+      <motion.div
+        className="shell relative flex flex-col items-center pb-10 pt-28 text-center sm:pt-32 lg:pb-0 lg:pt-[max(6.5rem,10.5vh)]"
+        initial={still ? false : "hidden"}
+        animate="shown"
+        variants={{ shown: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } } }}
+      >
+        <motion.p variants={RISE} className="eyebrow flex items-center gap-4 !tracking-[0.32em] text-[#E9C27A]">
+          <span aria-hidden className="h-px w-12 bg-gradient-to-r from-transparent to-current" />
+          {s.label}
+          <span aria-hidden className="h-px w-12 bg-gradient-to-l from-transparent to-current" />
         </motion.p>
-
+        <motion.span variants={RISE} aria-hidden className="mb-5 mt-3 block size-1.5 rotate-45 bg-[#E9C27A]" />
         <motion.h1
           id="hero-title"
-          className={cn(heroSerif.className, "text-[clamp(2.3rem,5.2vw,4.9rem)] font-medium leading-[1.04] tracking-[-0.02em]")}
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.3, ease: EASE, delay: 0.7 }}
+          variants={RISE}
+          className={cn(heroSerif.className, "text-[clamp(2.4rem,4.1vw,4.15rem)] font-normal leading-[1.06] tracking-[-0.03em] [text-shadow:0_2px_30px_rgba(0,0,0,0.35)]")}
         >
-          {first} {rest.slice(0, -1).join(" ")}
-          <br />
-          <em className="font-medium text-[#E9C27A]">{rest.at(-1)}</em>
+          {s.title[0]} <br className="xl:hidden" />
+          <em className="font-normal italic text-[#EBCB8B]">{s.title[1]}</em>
         </motion.h1>
-
-        <motion.p
-          className="mt-4 text-[clamp(1rem,1.3vw,1.15rem)] text-paper/75 lg:mt-5"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.05 }}
-        >
-          {site.heroLine}
+        <motion.p variants={RISE} className="mt-4 max-w-[62ch] text-[clamp(0.95rem,1.05vw,1.02rem)] leading-relaxed tracking-[0.01em] text-paper/75">
+          {s.text}
         </motion.p>
-
-        <motion.div
-          className="mt-7 flex flex-wrap items-center justify-center gap-x-7 gap-y-3"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.2, ease: EASE, delay: 1.25 }}
-        >
-          <ArrowLink href="#businesses" variant="solid">Explore our businesses</ArrowLink>
-          <ArrowLink href="/businesses/msp-traders#enquiry" className="text-paper">Wholesale enquiry</ArrowLink>
+        <motion.div variants={RISE} className="mt-6 flex flex-wrap items-center justify-center gap-x-7 gap-y-4">
+          <ArrowLink href={s.cta.href} variant="solid" className="!bg-[#E2BE7E] !text-[#1A120B] shadow-[0_10px_30px_-12px_rgba(226,190,126,0.6)] transition-colors hover:!bg-[#EFD3A1]">
+            {s.cta.label}
+          </ArrowLink>
+          <ArrowLink href={s.link?.href ?? "#businesses"} className="text-paper/85 hover:text-paper">
+            {s.link?.label ?? "All Businesses"}
+          </ArrowLink>
         </motion.div>
       </motion.div>
+
+      {/* The full scene on phones and tablets, below the message */}
+      <div className="relative aspect-[2339/1481] w-full lg:hidden">
+        <Image src={`/images/msp/${s.image}.jpg`} alt={s.alt} fill priority sizes="100vw" className="object-cover" />
+        <div aria-hidden className="absolute inset-x-0 top-0 h-1/4 bg-gradient-to-b from-[#2A1A10] to-transparent" />
+      </div>
+
+      {/* Catalogue caption — the products in the picture, named as on the packs */}
+      {"products" in s && (
+        <motion.div
+          className="absolute inset-x-0 bottom-0 hidden lg:block"
+          initial={still ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1, delay: 1 }}
+        >
+          <div className="shell flex items-center justify-between gap-8 pb-12 xl:pb-14">
+            <p className="eyebrow !text-[10px] text-paper/55">Part of the MSP Group</p>
+            <ul className="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/80">
+              {s.products.map((p, i) => (
+                <li key={p} className="flex items-center gap-4">
+                  {i > 0 && <span aria-hidden className="size-1 rotate-45 bg-[#E9C27A]" />}
+                  {p}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </motion.div>
+      )}
     </section>
   );
 }

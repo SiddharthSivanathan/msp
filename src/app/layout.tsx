@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import { Manrope } from "next/font/google";
 import { site } from "@/lib/content";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
-import { CustomCursor } from "@/components/chrome/CustomCursor";
 import { Navbar } from "@/components/chrome/Navbar";
 import { Footer } from "@/components/chrome/Footer";
 import { ScrollProgress } from "@/components/chrome/ScrollProgress";
@@ -51,7 +50,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <Navbar />
           <main id="main">{children}</main>
           <Footer />
-          <CustomCursor />
         </SmoothScroll>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </body>

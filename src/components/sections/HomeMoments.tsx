@@ -1,10 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { motion, useScroll } from "motion/react";
-import { useRef } from "react";
+import { motion } from "motion/react";
 import { own, ph, type ImageAsset } from "@/lib/content";
-import { useRange } from "@/lib/motion";
 import { EASE } from "@/lib/utils";
 import { Arrow, ArrowLink } from "@/components/ui/ArrowLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
@@ -37,41 +35,74 @@ export function WholesaleMoment() {
   );
 }
 
-/** Brands. Products. Markets. — product photography slides with the scroll. */
+/**
+ * Brands. Products. Markets. — one art-directed composition: the headline with
+ * its line and action beside it, then one dominant photograph (stock being
+ * prepared for distribution) with two supporting frames (the brands, the market)
+ * at matching heights. Nothing moves sideways and nothing reads as a gallery.
+ */
 export function DistributionMoment() {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useRange(scrollYProgress, [0, 1], ["4%", "-34%"]);
-  const strip: ImageAsset[] = [
-    ph("groceryShelves", "Distributed brands on shelf", "Stocked retail shelves", "products"),
-    ph("cartons", "Branded cartons ready for dispatch", "Cartons ready for dispatch", "products"),
-    ph("shopShelves", "A retailer stocked through distribution", "A shopkeeper in a stocked store", "products"),
-    ph("warehouseBoxes", "Distribution warehouse", "Cartons and crates in a distribution warehouse", "warehouse"),
-    own("lorry-street", "MSP lorry delivering at a market street", "road"),
+  const main = own("warehouse-stock-check", "Grocery stock being checked and prepared for distribution in the warehouse", "warehouse");
+  const brands: ImageAsset = {
+    src: "/brands/aachi-masala-packs.jpg",
+    alt: "Aachi masala packs — one of the brands distributed by M Sevugaperumal & Sons",
+    direction: "Distributed brands",
+    motif: "products",
+  };
+  const market = own("lorry-street", "Goods being delivered to a market street", "road");
+  const frames = [
+    { image: brands, label: "The brands" },
+    { image: market, label: "The market" },
   ];
+
   return (
-    <section ref={ref} aria-labelledby="distribution-moment-title" className="relative overflow-hidden bg-[#F6EEE3] py-24 text-[#2A211B] lg:py-36">
-      <div className="shell grid-12 items-end gap-y-8">
-        <div className="col-span-12 lg:col-span-8">
-          <p className="eyebrow mb-6 flex items-center gap-3 text-[#A4472A]">
-            <span aria-hidden className="h-px w-10 bg-current" />
-            M Sevugaperumal &amp; Sons
-          </p>
-          <SplitLines id="distribution-moment-title" lines={["Brands.", "Products. Markets."]} className="display-lg uppercase" />
+    <section aria-labelledby="distribution-moment-title" className="relative overflow-hidden bg-[#F6EEE3] py-20 text-[#2A211B] sm:py-24 lg:py-28">
+      <div className="shell">
+        <div className="grid-12 items-end gap-y-8">
+          <div className="col-span-12 lg:col-span-7">
+            <p className="eyebrow mb-6 flex items-center gap-3 text-[#A4472A]">
+              <span aria-hidden className="h-px w-10 bg-current" />
+              M Sevugaperumal &amp; Sons
+            </p>
+            <SplitLines
+              id="distribution-moment-title"
+              lines={["Brands.", "Products.", "Markets."]}
+              className="font-display text-[clamp(2.4rem,5vw,4.75rem)] font-extrabold uppercase leading-[0.95] tracking-[-0.045em]"
+            />
+          </div>
+          <Reveal className="col-span-12 sm:max-w-sm lg:col-span-4 lg:col-start-9 lg:max-w-none lg:pb-2">
+            <span aria-hidden className="mb-6 hidden h-px w-12 bg-[#A4472A] lg:block" />
+            <p className="text-[1.125rem] leading-relaxed text-[#2A211B]/75">Connecting products with the businesses that need them.</p>
+            <ArrowLink href="/businesses" variant="ink" className="mt-7">Explore Our Businesses</ArrowLink>
+          </Reveal>
         </div>
-        <Reveal className="col-span-12 lg:col-span-4 lg:pb-3">
-          <p className="font-display text-lg font-semibold opacity-75">Connecting products with the businesses that need them.</p>
-          <ArrowLink href="/businesses/m-sevugaperumal-and-sons" variant="ink" className="mt-6">Explore distribution</ArrowLink>
-        </Reveal>
+
+        {/* One dominant photograph, two supporting frames */}
+        <div className="mt-12 grid gap-3 sm:gap-4 lg:mt-16 lg:h-[min(60vh,620px)] lg:grid-cols-12">
+          <Reveal y={30} className="relative lg:col-span-8 lg:h-full">
+            <ImageSlot asset={main} caption={false} parallax={3} className="aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-full" sizes="(min-width:1024px) 62vw, 100vw" />
+            <Caption>Stock prepared for distribution</Caption>
+          </Reveal>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:col-span-4 lg:h-full lg:grid-cols-1 lg:grid-rows-2">
+            {frames.map((f, i) => (
+              <Reveal key={f.label} y={30} delay={0.1 + i * 0.08} className="relative lg:h-full lg:min-h-0">
+                <ImageSlot asset={f.image} caption={false} interimTag={false} className="aspect-square lg:aspect-auto lg:h-full" sizes="(min-width:1024px) 31vw, 50vw" />
+                <Caption>{f.label}</Caption>
+              </Reveal>
+            ))}
+          </div>
+        </div>
       </div>
-      <motion.ul style={{ x }} className="mt-14 flex w-max gap-4 lg:mt-20">
-        {strip.map((im, i) => (
-          <li key={i} className={i % 2 ? "w-[62vw] sm:w-[36vw] lg:w-[26vw]" : "w-[78vw] sm:w-[46vw] lg:w-[34vw]"}>
-            <ImageSlot asset={im} seed={1400 + i} interimTag={i === 0} className={i % 2 ? "aspect-[4/5]" : "aspect-[4/3]"} sizes="35vw" />
-          </li>
-        ))}
-      </motion.ul>
     </section>
+  );
+}
+
+/** A quiet label in the corner of a frame. */
+function Caption({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/55 to-transparent px-4 pb-3 pt-10 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/90 sm:px-5 sm:pb-4">
+      {children}
+    </span>
   );
 }
 

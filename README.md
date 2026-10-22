@@ -97,7 +97,7 @@ garbled text and the number plates are invented — the client should confirm th
 
 | File | Where it's used |
 |---|---|
-| hero-still (crop of the spices banner, badge/URL removed) | Homepage hero — product still-life, edges masked into #2E1C11 |
+| hero-fresh-full (hero-still with the wall extended upward, 2339×1481) | Homepage hero — full product scene as background, message centred above packs |
 | warehouse-loading | MSP Traders hero |
 | market-delivery | Homepage hero side tile, M Sevugaperumal & Sons hero |
 | market-unloading | Homepage tile (MSP Traders), MSP Traders statement |

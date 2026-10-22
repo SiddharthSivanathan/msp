@@ -1,126 +1,95 @@
 import Link from "next/link";
 import { businesses, own, ph, type Business, type ImageAsset } from "@/lib/content";
+import { heroSerif } from "@/lib/fonts";
 import { cn } from "@/lib/utils";
 import { Arrow } from "@/components/ui/ArrowLink";
 import { ImageSlot } from "@/components/ui/ImageSlot";
 import { Reveal } from "@/components/ui/Reveal";
-import { SplitLines } from "@/components/ui/SplitLines";
 
 /**
- * Our businesses — an asymmetric editorial layout, not six identical cards.
- * Distribution and wholesale get the largest frames; transport, cargo and
- * finance follow at smaller scale. Each frame carries its business's own tint
- * so the six worlds are already distinct before you click.
+ * Our businesses as an editorial index. The core of the group, distribution
+ * and wholesale, leads in two wide frames; the other four follow in an even row
+ * beneath. Photographs are shown clean (no tints) and the words sit below them
+ * in the hero's serif, so the section reads as one calm, aligned composition.
  */
-type Tile = { span: string; aspect: string; tint: string; image: ImageAsset; size: "lg" | "md" | "sm" };
-
-const TILES: Record<Business["slug"], Tile> = {
-  "m-sevugaperumal-and-sons": {
-    span: "lg:col-span-7",
-    aspect: "aspect-[4/3] lg:aspect-[7/6]",
-    tint: "from-[#3A231A]/90 via-[#3A231A]/30",
-    image: own("street-loading", "MSP team unloading stock from an MSP truck at a market street", "people"),
-    size: "lg",
-  },
-  "msp-traders": {
-    span: "lg:col-span-5 lg:mt-24",
-    aspect: "aspect-[4/5]",
-    tint: "from-[#2B2419]/90 via-[#2B2419]/30",
-    image: own("market-unloading", "MSP team unloading rice sacks from a lorry at the market", "grain"),
-    size: "lg",
-  },
-  "msp-fresh-products": {
-    span: "lg:col-span-5",
-    aspect: "aspect-[4/5] lg:aspect-[5/6]",
-    tint: "from-[#5A2412]/85 via-[#5A2412]/25",
-    image: own("fresh-chilli-scene", "MSP Fresh Kashmiri Chilli Powder pack with chillies and chilli powder", "products"),
-    size: "md",
-  },
-  "msp-store": {
-    span: "lg:col-span-4 lg:mt-16",
-    aspect: "aspect-[4/5]",
-    tint: "from-[#1A2024]/90 via-[#1A2024]/30",
-    image: own("fleet-yard", "MSP vans and goods carriers lined up at the depot", "road"),
-    size: "md",
-  },
-  "msp-cargo-service": {
-    span: "lg:col-span-3 lg:mt-32",
-    aspect: "aspect-[4/5] lg:aspect-[3/4]",
-    tint: "from-[#051320]/90 via-[#051320]/30",
-    image: ph("portDusk", "MSP Cargo Service — port", "Port cranes at dusk", "containers"),
-    size: "sm",
-  },
-  "saptagiri-finance": {
-    span: "lg:col-span-12",
-    aspect: "aspect-[4/3] sm:aspect-[21/9] lg:aspect-[32/9]",
-    tint: "from-[#0D141C]/95 via-[#0D141C]/65",
-    image: ph("finNecklace", "Saptagiri Finance — valuables handled with care", "A gold necklace and earrings on a dark surface", "products"),
-    size: "md",
-  },
+const IMAGES: Record<Business["slug"], ImageAsset> = {
+  "m-sevugaperumal-and-sons": own("street-loading", "Stock being unloaded from a delivery truck at a market street", "people"),
+  "msp-traders": own("warehouse-loading", "Rice and grocery sacks being loaded for dispatch in a wholesale warehouse", "warehouse"),
+  "msp-fresh-products": own("fresh-range", "MSP Fresh White Pepper Powder, Kashmiri Chilli Powder and Pickle Masala packs", "products"),
+  "msp-store": own("fleet-yard", "Goods vehicles lined up at the depot", "road"),
+  "msp-cargo-service": own("lorry-inside", "Cargo sacks being loaded into a goods lorry", "people"),
+  "saptagiri-finance": ph("finBanglesRed", "Saptagiri Finance — valuables handled with care", "Gold bangles on a red cloth", "products"),
 };
+
+const LEAD = new Set<Business["slug"]>(["m-sevugaperumal-and-sons", "msp-traders"]);
+const serif = heroSerif.className;
 
 export function HomeBusinesses() {
   return (
     <section id="businesses" aria-labelledby="businesses-title" className="relative bg-paper text-ink">
-      <div className="shell py-24 sm:py-32 lg:py-40">
+      <div className="shell py-20 sm:py-28 lg:py-32">
         <div className="grid-12 items-end gap-y-6">
-          <div className="col-span-12 lg:col-span-8">
+          <div className="col-span-12 lg:col-span-7">
             <p className="eyebrow mb-6 flex items-center gap-3 text-rust">
               <span aria-hidden className="h-px w-10 bg-current" />
               The MSP Group
             </p>
-            <SplitLines id="businesses-title" lines={["Our businesses."]} className="display-lg uppercase" />
+            <h2 id="businesses-title" className={cn(serif, "text-[clamp(2.4rem,5vw,4.5rem)] font-medium leading-[1.02] tracking-[-0.03em]")}>
+              Our businesses.
+            </h2>
           </div>
-          <p className="col-span-12 font-display text-lg font-semibold text-ink/70 lg:col-span-4 lg:pb-3 lg:text-right">
-            Different businesses. One growing network.
+          <p className="col-span-12 max-w-sm text-[1.05rem] leading-relaxed text-ink/65 lg:col-span-4 lg:col-start-9 lg:pb-2">
+            Six businesses, each serving a different need — one group behind them.
           </p>
         </div>
 
-        <ul className="grid-12 mt-14 gap-y-4 lg:mt-20 lg:gap-y-6">
-          {businesses.map((b, i) => (
-            <Reveal as="li" key={b.slug} delay={(i % 3) * 0.08} className={cn("col-span-12", b.slug !== "saptagiri-finance" && "sm:col-span-6", TILES[b.slug].span)}>
-              <BusinessTile b={b} t={TILES[b.slug]} />
-            </Reveal>
-          ))}
+        <ul className="mt-12 grid gap-x-4 gap-y-12 sm:grid-cols-2 lg:mt-16 lg:grid-cols-12 lg:gap-x-5 lg:gap-y-14">
+          {businesses.map((b, i) => {
+            const lead = LEAD.has(b.slug);
+            return (
+              <Reveal as="li" key={b.slug} y={24} delay={(i % 4) * 0.07} className={lead ? "sm:col-span-1 lg:col-span-6" : "lg:col-span-3"}>
+                <BusinessEntry b={b} lead={lead} />
+              </Reveal>
+            );
+          })}
         </ul>
       </div>
     </section>
   );
 }
 
-function BusinessTile({ b, t }: { b: Business; t: Tile }) {
-  const finance = b.slug === "saptagiri-finance";
+function BusinessEntry({ b, lead }: { b: Business; lead: boolean }) {
   return (
-    <Link
-      href={`/businesses/${b.slug}`}
-      data-cursor="Explore"
-      aria-label={`${b.name} — ${b.card.category}. ${b.card.tagline}`}
-      className="group/arrow group relative block overflow-hidden bg-navy text-paper"
-    >
-      <div className="transition-transform duration-[1.4s] ease-[var(--ease-brand)] group-hover:scale-[1.05]">
-        <ImageSlot asset={t.image} caption={false} parallax={4} className={t.aspect} sizes="(min-width:1024px) 50vw, 100vw" />
+    <Link href={`/businesses/${b.slug}`} data-cursor="Explore" className="group/arrow group block">
+      <div className="overflow-hidden">
+        <div className="transition-transform duration-[1.2s] ease-[var(--ease-brand)] group-hover:scale-[1.04]">
+          <ImageSlot
+            asset={IMAGES[b.slug]}
+            caption={false}
+            interimTag={false}
+            className={lead ? "aspect-[4/3] lg:aspect-[16/10]" : "aspect-[4/3] lg:aspect-[4/5]"}
+            sizes={lead ? "(min-width:1024px) 50vw, (min-width:640px) 50vw, 100vw" : "(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"}
+          />
+        </div>
       </div>
-      <div aria-hidden className={cn("absolute inset-0 bg-gradient-to-t to-transparent", finance && "bg-gradient-to-r", t.tint)} />
-      <span aria-hidden className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 transition-transform duration-700 ease-[var(--ease-brand)] group-hover:scale-x-100" style={{ background: b.accent }} />
-
-      <div className={cn("absolute inset-0 flex flex-col justify-end p-6 lg:p-8", finance && "lg:justify-center")}>
-        <p className="eyebrow flex items-center gap-3 text-paper/75">
-          <span className="tabular-nums">{b.index}</span>
-          <span aria-hidden className="h-px w-8" style={{ background: b.accent }} />
-          {b.card.category}
-        </p>
-        <h3
-          className={cn(
-            "mt-4 font-display uppercase leading-[0.95] tracking-[-0.03em]",
-            finance ? "font-light" : "font-extrabold",
-            t.size === "lg" ? "text-[clamp(1.9rem,3.4vw,3.25rem)]" : t.size === "md" ? "text-[clamp(1.6rem,2.4vw,2.4rem)]" : "text-[clamp(1.5rem,1.9vw,1.9rem)]",
-          )}
-        >
-          {b.name}
-        </h3>
-        <p className="mt-2 text-paper/80">{b.card.tagline}</p>
-        <span className="eyebrow mt-6 inline-flex items-center gap-3">
-          Explore <Arrow />
+      <div className="mt-5 flex items-start justify-between gap-4 border-t border-ink/15 pt-4">
+        <div>
+          <p className="eyebrow tabular-nums text-ink/45">
+            {b.index} · {b.card.category}
+          </p>
+          <h3
+            className={cn(
+              serif,
+              "mt-2 font-medium leading-tight tracking-[-0.015em] transition-colors duration-500 group-hover:text-rust",
+              lead ? "text-[clamp(1.6rem,2.4vw,2.25rem)]" : "text-[clamp(1.35rem,1.6vw,1.6rem)]",
+            )}
+          >
+            {b.name}
+          </h3>
+          <p className="mt-1.5 text-ink/60">{b.card.tagline}</p>
+        </div>
+        <span className="mt-1 shrink-0 text-ink/50 transition-colors group-hover:text-rust" aria-hidden>
+          <Arrow />
         </span>
       </div>
     </Link>
